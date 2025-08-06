@@ -16,25 +16,35 @@ radians = [math.radians(a) for a in angles]
 
 # Define function to calculate and plot the tangent function
 def plot_tangent():
-    # Restrict x-value range to make asymptotes clearer
-    limited_x = list(range(-90, 91))
-    # To avoid the asymptotes, create a list of the angles that do not equal (90 + [k*180]) degrees
-    safe_angles = [a for a in limited_x if a % 180 != 90]
+    # Define x-range values to include multiple periods/cycles of the tangent function
+    full_x = list(range(-270, 271))
 
-    # Convert the safe values to radians
-    safe_radians = [math.radians(a) for a in safe_angles]
+    # Setup the plot
+    plt.figure(figsize=(10, 10))
 
-    # Calculate the tangent values for the safe angles using the radian values
-    y = [math.tan(rad) for rad in safe_radians]
-
-    # Plot the tangent function
-    plt.figure(figsize=(10, 5))
-    plt.plot(safe_angles, y, color='blue', linewidth=2, label='tan(x)')
-
-    # Draw the tangent asymptotes
+    # Define the tangent asymptotes values
     asymptotes_values = [a for a in range(-270, 271, 180) if a != 0]
+
+    # Plot the asymptotes
     for i, a in enumerate(asymptotes_values):
         plt.axvline(x=a, color='red', linestyle='--', linewidth=1, label='Asymptote' if i == 0 else "")
+    
+    # Calculate and plot the tangent function per cycle while avoiding the asymptotes
+    tangent_edges = [-270] + asymptotes_values + [270]
+    for i in range(len(tangent_edges) - 1):
+        # Start drawing from the first asymptote to the next one,
+        # making sure to be "1" degree away from the asymptote
+        start = tangent_edges[i] + 1
+        end = tangent_edges[i + 1]
+
+        # Calculate the values for the safe angles between asymptotes
+        safe_angles = [a for a in full_x if start < a < end]
+
+        # Calculate the tangent values for the safe angles
+        y = [math.tan(math.radians(a)) for a in safe_angles]
+
+        # Plot the tangent function segment
+        plt.plot(safe_angles, y, color='blue', linewidth=2, label='tan(angle)' if i == 0 else "")
 
     # Set the plot limits and labels
     plt.title('Tangent Function with Asymptotes')
@@ -43,7 +53,7 @@ def plot_tangent():
     plt.grid(True)
     plt.axhline(0, color='black', linewidth=0.5)
     plt.axvline(0, color='black', linewidth=0.5)
-    plt.ylim(-5, 5)
+    plt.ylim(-20, 20)
     plt.legend()
     plt.show()
 
